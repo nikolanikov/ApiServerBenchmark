@@ -1,0 +1,6 @@
+~/wiki/tests/purecalcphp # time php test.php 
+
+real    6m4.350s
+user    6m4.104s
+sys     0m0.069s
+

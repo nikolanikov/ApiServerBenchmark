@@ -1,0 +1,13 @@
+ ~/wiki/purecalc # gcc test.c -o test
+ ~/wiki/purecalc # time ./test
+
+real    0m8.568s
+user    0m8.560s
+sys     0m0.003s
+ ~/wiki/purecalc # gcc -O2 test.c -o testO2
+ ~/wiki/purecalc # time ./testO2
+
+real    0m4.396s
+user    0m4.387s
+sys     0m0.003s
+
