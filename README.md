@@ -104,6 +104,7 @@ Successful transactions:        4668
 Failed transactions:               0
 Longest transaction:            0.38
 Shortest transaction:           0.04
+```
 
 Even without thread pool it is still 3 times faster :)
 I will modify the source a little to use posix threads pool + poll (epoll is better but is only for linux)
