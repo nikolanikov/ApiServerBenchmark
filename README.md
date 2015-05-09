@@ -16,7 +16,7 @@ My simple recursive fibonacci function is:
 I have created pure Node.js and C app to test the results:
 
 ##pure C:
-
+```
  ~/wiki/purecalc # gcc test.c -o test
  ~/wiki/purecalc # time ./test
 
@@ -29,24 +29,24 @@ sys     0m0.003s
 real    0m4.396s
 user    0m4.387s
 sys     0m0.003s
-
+```
 ##pure NodeJS v0.10.29:
-
+```
  ~/wiki/purecalcnodejs # time nodejs test.js 
 done
 
 real    0m14.515s
 user    0m14.714s
 sys     0m0.027s
-
+```
 ##And PHP example just for reference :)
-
+```
 ~/wiki/tests/purecalcphp # time php test.php 
 
 real    6m4.350s
 user    6m4.104s
 sys     0m0.069s
-
+```
 
 As the results shows, the compiled with optimizations C code is more than 3 times faster.
 
@@ -59,6 +59,7 @@ I'm using siege to test the performance, the results are recorded in results fil
 
 siege -b -c10 -t60S http://127.0.0.1:8000
 
+```
 Transactions:               1407 hits
 Availability:             100.00 %
 Elapsed time:              59.92 secs
@@ -71,7 +72,7 @@ Successful transactions:        1407
 Failed transactions:               0
 Longest transaction:            1.47
 Shortest transaction:           0.14
-
+```
 #C API server:
 
 Node.JS is good choice because you are able to write in pure JavaScript and a lot of engineers are used to with JS, but because we want the fastest possible performance I will choose C.
@@ -88,6 +89,7 @@ I didn't pay much attention about making it easy to compile on every possible en
 Firstly I have created a pure C server that is parsing the requests, invokes the fibonacci function and returns the result as response.
 This was thread per connection response server and the siege results are below:
 
+```
 Lifting the server siege...-^H      done.
 
 Transactions:               4668 hits
@@ -108,6 +110,7 @@ I will modify the source a little to use posix threads pool + poll (epoll is bet
 
 And the result is:
 
+```
 Lifting the server siege...-^H      done.
 
 Transactions:               4477 hits
@@ -122,6 +125,7 @@ Successful transactions:        4477
 Failed transactions:               0
 Longest transaction:            0.25
 Shortest transaction:           0.05
+```
 
 It shows a little decrease in the performance (we are not able to compare exactly the difference on the current stage, because the bottle neck is in the fibonacci and the current load of the server
 if 100 fibonacci calculations in the C server is taking 5 secs per thread so for 4 threads 400 fibonacci calculations are taking 5seconds so the 4477 hits are taking 55.96secs just for the calculation.)
@@ -142,6 +146,7 @@ The reason for doing it because the I/O of the RAM is pretty fast compared to th
 Without the fibonacci, just serving the file the results are:
 It is real world example with serving the static content of Latest_plane_crash, so I decided to create a benchmark to show that 20k requests are almost achievable even on my slow VPS that is missing I/O performance.
 
+```
 Transactions:             270639 hits
 Availability:             100.00 %
 Elapsed time:              59.28 secs
@@ -154,8 +159,10 @@ Successful transactions:      270639
 Failed transactions:               0
 Longest transaction:            0.05
 Shortest transaction:           0.00
+```
 
 The Latest_plane_crash content is:
+```
 ~ # cat /tmp/data/Latest_plane_crash 
 <html>
 <body>
@@ -166,7 +173,7 @@ plane crashed again
 be careful when you fly :)
 </body>
 </html>
-----------------------------
+```
 
 However, on every call we are calculating fibonacci(34) as required.
 
@@ -178,6 +185,7 @@ The new versions are stored in
 /tmp/data/Latest_plane_crash/4 where 4 is the version
 
 Test:
+```
 telnet 127.0.0.1 8080
 
 POST / HTTP/1.1
@@ -185,7 +193,7 @@ Host: test.com
 Content-Length: 18
 
 new file content
-
+```
 ##API calls dynamic:
 The idea behind dynamic calls is that we are getting JSON input on request and provide JSON output on the response.
 This way we are able to create easily many different dynamic calls. It must be urlencoded or base64(not implemented)
@@ -197,6 +205,7 @@ Example response:
 {"version":4}
 
 Test:
+```
 telnet 127.0.0.1 8080
 GET /?%7B%22actions%22%3A%7B%22article.get_version%22%3A%7B%7D%7D%7D HTTP/1.1
 Host: rethrthrtht
@@ -207,7 +216,7 @@ Content-Length: 18
 Date: Sat, 09 May 2015 18:17:21 GMT
 
 {"version": 4}
-
+```
 
 
 /?{"actions":{"example.hello_world":{}}}
@@ -216,6 +225,7 @@ The idea is to show how can be created additional dynamic API calls.
 
 Test:
 telnet 127.0.0.1 8080
+```
 GET /?%7B%22actions%22%3A%7B%22example.hello_world%22%3A%7B%7D%7D%7D HTTP/1.1
 Host: rethrthrtht
 
@@ -225,7 +235,7 @@ Content-Length: 13
 Date: Sat, 09 May 2015 18:15:48 GMT
 
 Hello world!
-
+```
 Source:
 ```
 int example_hello_world(const struct http_request *request, struct http_response *restrict response, struct resources *restrict resources, const union json *options)
